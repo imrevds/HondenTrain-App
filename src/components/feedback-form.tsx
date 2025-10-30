@@ -168,16 +168,6 @@ export const FeedbackForm = () => {
                               {feedback.email}
                             </p>
                           )}
-                        </div>
-                        <p className="text-xs text-muted-foreground">
-                          {feedback.timestamp.toLocaleString('nl-NL', {
-                            day: 'numeric',
-                            month: 'short',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })}
-                        </p>
-                      </div>
                       <p className="text-sm text-foreground/80 whitespace-pre-wrap">
                         {feedback.message}
                       </p>
