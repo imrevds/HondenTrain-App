@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface TrainingItem {
   id: string;
@@ -65,17 +65,33 @@ export const useTrainingData = () => {
     setItems(prev => prev.map(item => ({ ...item, completed: false })));
   };
 
+  const wasCompleteRef = useRef(false);
+
   // Update stats when items change
   useEffect(() => {
     const completedCount = items.filter(item => item.completed).length;
     const completionRate = (completedCount / items.length) * 100;
+    const isComplete = completionRate === 100;
     
-    setStats(prev => ({
-      ...prev,
-      completedToday: completedCount,
-      totalItems: items.length,
-      completionRate
-    }));
+    // Increase streak when going from incomplete to complete
+    if (isComplete && !wasCompleteRef.current) {
+      setStats(prev => ({
+        ...prev,
+        currentStreak: prev.currentStreak + 1,
+        completedToday: completedCount,
+        totalItems: items.length,
+        completionRate
+      }));
+    } else {
+      setStats(prev => ({
+        ...prev,
+        completedToday: completedCount,
+        totalItems: items.length,
+        completionRate
+      }));
+    }
+    
+    wasCompleteRef.current = isComplete;
   }, [items]);
 
   return {
