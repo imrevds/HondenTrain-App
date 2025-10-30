@@ -5,13 +5,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
-import { MessageSquare, Send } from "lucide-react";
+import { MessageSquare, Send, User } from "lucide-react";
+
+interface FeedbackItem {
+  id: string;
+  name: string;
+  email: string;
+  message: string;
+  timestamp: Date;
+}
 
 export const FeedbackForm = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [feedbackList, setFeedbackList] = useState<FeedbackItem[]>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,8 +36,19 @@ export const FeedbackForm = () => {
 
     setIsSubmitting(true);
     
+    // Add feedback to list
+    const newFeedback: FeedbackItem = {
+      id: Date.now().toString(),
+      name: name.trim() || "",
+      email: email.trim() || "",
+      message: message.trim(),
+      timestamp: new Date()
+    };
+    
     // Simulate API call
     setTimeout(() => {
+      setFeedbackList(prev => [newFeedback, ...prev]);
+      
       toast({
         title: "Bedankt voor je feedback! 🐕",
         description: "We waarderen je input en zullen ernaar kijken.",
@@ -114,6 +134,52 @@ export const FeedbackForm = () => {
           </form>
         </CardContent>
       </Card>
+
+      {feedbackList.length > 0 && (
+        <div className="space-y-4">
+          <h3 className="text-xl font-bold text-foreground">
+            Ingediende Feedback ({feedbackList.length})
+          </h3>
+          <div className="space-y-3">
+            {feedbackList.map((feedback) => (
+              <Card key={feedback.id} className="border">
+                <CardContent className="pt-6">
+                  <div className="flex items-start gap-3">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 flex-shrink-0">
+                      <User className="w-5 h-5 text-primary" />
+                    </div>
+                    <div className="flex-1 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-semibold text-foreground">
+                            {feedback.name || "Anoniem"}
+                          </p>
+                          {feedback.email && (
+                            <p className="text-sm text-muted-foreground">
+                              {feedback.email}
+                            </p>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          {feedback.timestamp.toLocaleString('nl-NL', {
+                            day: 'numeric',
+                            month: 'short',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </p>
+                      </div>
+                      <p className="text-sm text-foreground/80 whitespace-pre-wrap">
+                        {feedback.message}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
