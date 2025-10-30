@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -20,7 +20,16 @@ export const FeedbackForm = () => {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [feedbackList, setFeedbackList] = useState<FeedbackItem[]>([]);
+  const [feedbackList, setFeedbackList] = useState<FeedbackItem[]>(() => {
+    // Load from localStorage on initial render
+    const stored = localStorage.getItem('dogTrainingFeedback');
+    return stored ? JSON.parse(stored) : [];
+  });
+
+  // Save to localStorage whenever feedbackList changes
+  useEffect(() => {
+    localStorage.setItem('dogTrainingFeedback', JSON.stringify(feedbackList));
+  }, [feedbackList]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
