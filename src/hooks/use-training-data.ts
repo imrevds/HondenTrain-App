@@ -55,6 +55,8 @@ export const useTrainingData = () => {
     completionRate: 0
   });
 
+  const [completedDays, setCompletedDays] = useState<string[]>([]);
+
   const toggleItem = (id: string) => {
     setItems(prev => prev.map(item => 
       item.id === id ? { ...item, completed: !item.completed } : item
@@ -75,6 +77,17 @@ export const useTrainingData = () => {
     
     // Increase streak when going from incomplete to complete
     if (isComplete && !wasCompleteRef.current) {
+      // Add today to completed days
+      const today = new Date();
+      const dateString = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+      
+      setCompletedDays(prev => {
+        if (!prev.includes(dateString)) {
+          return [...prev, dateString];
+        }
+        return prev;
+      });
+      
       setStats(prev => ({
         ...prev,
         currentStreak: prev.currentStreak + 1,
@@ -97,6 +110,7 @@ export const useTrainingData = () => {
   return {
     items,
     stats,
+    completedDays,
     toggleItem,
     resetDaily
   };

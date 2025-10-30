@@ -5,13 +5,14 @@ import { TrainingChecklist } from "@/components/training-checklist";
 import { StatsCard } from "@/components/stats-card";
 import { FeedbackForm } from "@/components/feedback-form";
 import { ExercisesView } from "@/components/exercises-view";
+import { WeekProgress } from "@/components/week-progress";
 import { ProgressRing } from "@/components/ui/progress-ring";
 import { useTrainingData } from "@/hooks/use-training-data";
 import { Heart, Flame, Target, RotateCcw } from "lucide-react";
 import dogHero from "@/assets/dog-hero.png";
 
 const Index = () => {
-  const { items, stats, toggleItem, resetDaily } = useTrainingData();
+  const { items, stats, completedDays, toggleItem, resetDaily } = useTrainingData();
 
   return (
     <div className="min-h-screen bg-gradient-warm">
@@ -48,6 +49,8 @@ const Index = () => {
           </TabsList>
 
           <TabsContent value="training" className="space-y-6">
+            <WeekProgress completedDays={completedDays} />
+
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <StatsCard
